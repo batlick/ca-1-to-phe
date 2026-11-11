@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Cả 1 tổ phê — Cà phê Tổ 1 | Đặt Món Từ Xa</title>
+  <link rel="icon" type="image/png" href="/static/images/logo.png" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <!-- Sticky Brand Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <a href="/" class="brand-identity">
+        <img src="/static/images/logo.png" alt="Logo Cà phê Tổ 1" class="brand-logo" />
+        <div class="brand-titles">
+          <span class="brand-title-sub">Cà phê Tổ 1</span>
+          <span class="brand-title-main">Cả 1 tổ phê</span>
+        </div>
+      </a>
+      <div class="header-actions">
+        <span id="table-pill" class="pill-badge">⚡ Ly 700ML</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Live Order Status Tracker (Appears automatically when customer has placed an order) -->
+    <section id="live-tracker-section" class="tracker-section" style="display: none;">
+      <div id="live-tracker-card" class="tracker-card">
+        <div class="tracker-header">
+          <div>
+            <span style="font-size: 0.78rem; font-weight: 800; color: var(--brand-blue); text-transform: uppercase;">
+              📡 Trạng thái đơn hàng trực tiếp
+            </span>
+            <h3 id="tracker-customer-title" style="font-size: 1.25rem; margin-top: 2px;">Đơn của bạn</h3>
+          </div>
+          <span id="tracker-order-code" class="tracker-code">#101</span>
+        </div>
+
+        <div id="tracker-steps-row" class="tracker-steps">
+          <div id="step-pending" class="t-step active">1. Chờ quầy nhận</div>
+          <div id="step-preparing" class="t-step">2. Đang pha chế ☕</div>
+          <div id="step-ready" class="t-step">3. Đã xong! Ra nhận 🎉</div>
+        </div>
+
+        <p id="tracker-status-msg" style="font-size: 0.95rem; font-weight: 700; color: var(--espresso); margin-bottom: 10px;">
+          Đơn hàng đã gửi tới quầy pha chế! Bạn đợi xíu nhé...
+        </p>
+
+        <div id="tracker-items-summary" style="font-size: 0.84rem; color: var(--espresso-muted); background: #FAF6E8; padding: 10px 12px; border-radius: 10px; border: 1.5px dashed #D5CBB8;">
+        </div>
+      </div>
+    </section>
+
+    <!-- Hero Banner Featuring the Official Poster -->
+    <section class="hero-card">
+      <div class="hero-content">
+        <div class="hero-badge-row">
+          <span class="hero-volume-tag">🔥 1 LY “TO ĐÙNG” 700ML</span>
+          <span class="hero-price-pill">⚡ Chỉ từ 15.000đ</span>
+        </div>
+        <div>
+          <h1 class="hero-headline-blue">Năng lượng</h1>
+          <h2 class="hero-headline-red">cho ngày mới</h2>
+        </div>
+        <p class="hero-sub">
+          ✨ <strong>Sáng nay bạn chọn Ngụm vị nào?</strong><br />
+          Đậm đà hương vị cà phê nguyên bản từ <strong>Cà phê Tổ 1</strong> — Chọn món nhanh chóng ngay trên điện thoại, tụi mình pha liền tay!
+        </p>
+        <div class="hero-cta-row">
+          <a href="#menu-section" class="btn-hero-order">🥤 Khám phá Menu & Chọn món ↓</a>
+        </div>
+      </div>
+      <div class="hero-poster-wrap">
+        <img src="/static/images/poster.jpg" alt="Poster Năng lượng cho ngày mới - Cà phê Tổ 1" class="hero-poster-img" />
+      </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>🥤 Thực Đơn Tổ 1</span>
+        </h2>
+        <span style="font-size: 0.86rem; font-weight: 700; color: var(--brand-red);">
+          Đồng giá ly khổng lồ 700ml • Pha mới 100%
+        </span>
+      </div>
+
+      <div id="menu-grid" class="menu-grid">
+        <!-- Populated dynamically via app.js -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Floating Bottom Cart Bar -->
+  <div id="floating-cart" class="floating-cart-bar hidden" onclick="openCheckoutModal()">
+    <div class="cart-bar-left">
+      <div id="cart-count" class="cart-count-circle">0</div>
+      <div>
+        <div style="font-size: 0.78rem; color: #FDE68A; font-weight: 700;">Giỏ đồ uống của bạn</div>
+        <div id="cart-total-text" style="font-size: 1.15rem; font-weight: 800;">0đ</div>
+      </div>
+    </div>
+    <div class="cart-bar-btn">Đặt ngay →</div>
+  </div>
+
+  <!-- Modal 1: Customize Drink Options -->
+  <div id="customize-modal" class="modal-backdrop hidden">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <span id="modal-drink-tagline" class="poster-blue-tag">Cà phê Tổ 1</span>
+          <h3 id="modal-drink-name" style="font-size: 1.5rem;">Cà phê sữa</h3>
+          <div id="modal-drink-price" style="font-weight: 800; color: var(--brand-red); font-size: 1.15rem;">18.000đ • Ly 700ml</div>
+        </div>
+        <button class="btn-close" onclick="closeCustomizeModal()">✕</button>
+      </div>
+
+      <div class="option-group">
+        <label class="option-label">1. Chọn mức ngọt / độ đậm:</label>
+        <div id="sweetness-options" class="chip-grid">
+          <div class="choice-chip selected" data-val="Chuẩn vị Tổ 1" onclick="selectSweetness(this)">⭐ Chuẩn vị Tổ 1</div>
+          <div class="choice-chip" data-val="Ít ngọt" onclick="selectSweetness(this)">Ít ngọt</div>
+          <div class="choice-chip" data-val="Nhiều sữa" onclick="selectSweetness(this)">Nhiều sữa</div>
+          <div class="choice-chip" data-val="Không đường" onclick="selectSweetness(this)">Không đường</div>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label class="option-label">2. Chọn mức đá:</label>
+        <div id="ice-options" class="chip-grid">
+          <div class="choice-chip selected" data-val="Đá chung bình thường" onclick="selectIce(this)">🧊 Đá bình thường</div>
+          <div class="choice-chip" data-val="Ít đá" onclick="selectIce(this)">Ít đá</div>
+          <div class="choice-chip" data-val="Đá để riêng" onclick="selectIce(this)">Đá để riêng</div>
+          <div class="choice-chip" data-val="Nhiều đá" onclick="selectIce(this)">Nhiều đá</div>
+        </div>
+      </div>
+
+      <div class="option-group">
+        <label class="option-label">3. Ghi chú thêm cho ly này (tuỳ chọn):</label>
+        <input id="modal-item-note" type="text" class="input-field" placeholder="VD: Bỏ bịch mang đi, thêm quai xách..." />
+      </div>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; margin: 18px 0;">
+        <span style="font-weight: 800;">Số lượng ly:</span>
+        <div class="qty-selector">
+          <button class="qty-btn" onclick="changeModalQty(-1)">−</button>
+          <span id="modal-qty-val" style="font-weight: 800; font-size: 1.1rem; min-width: 24px; text-align: center;">1</span>
+          <button class="qty-btn" onclick="changeModalQty(1)">+</button>
+        </div>
+      </div>
+
+      <button id="modal-confirm-btn" class="btn-primary-block" onclick="confirmAddToCart()">
+        Thêm vào đơn • 18.000đ
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal 2: Cart Review & Fast Checkout -->
+  <div id="checkout-modal" class="modal-backdrop hidden">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <span class="poster-blue-tag">Xác nhận Order</span>
+          <h3 style="font-size: 1.5rem;">Giỏ hàng của bạn</h3>
+        </div>
+        <button class="btn-close" onclick="closeCheckoutModal()">✕</button>
+      </div>
+
+      <div id="checkout-items-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+      </div>
+
+      <div style="background: #F9EFCB; border: 2px solid var(--border-dark); border-radius: 14px; padding: 14px; margin-bottom: 16px;">
+        <div class="option-group" style="margin-bottom: 12px;">
+          <label class="option-label">Tên của bạn (để quầy gọi tên khi pha xong) *:</label>
+          <input id="customer-name-input" type="text" class="input-field" placeholder="VD: Anh Minh, Chị Lan, Bạn áo trắng..." />
+        </div>
+        <div class="option-group" style="margin-bottom: 12px;">
+          <label class="option-label">Số bàn / Vị trí ngồi (tuỳ chọn):</label>
+          <input id="table-name-input" type="text" class="input-field" placeholder="VD: Bàn 02, Ngồi ghế đỏ vỉa hè, Mang đi..." />
+        </div>
+        <div class="option-group" style="margin-bottom: 0;">
+          <label class="option-label">Ghi chú chung cho đơn hàng:</label>
+          <input id="order-note-input" type="text" class="input-field" placeholder="VD: Làm nhanh giúp mình nhé..." />
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 4px; border-top: 2px dashed var(--border-dark); margin-bottom: 12px;">
+        <div>
+          <div style="font-size: 0.8rem; font-weight: 700; color: var(--espresso-muted);">Phương thức thanh toán:</div>
+          <div style="font-size: 0.9rem; font-weight: 800; color: var(--brand-blue);">💵 Thanh toán tại quầy khi nhận nước</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 0.8rem; font-weight: 700;">Tổng cộng:</div>
+          <div id="checkout-total-amount" style="font-family: 'Baloo 2', cursive; font-size: 1.7rem; font-weight: 800; color: var(--brand-red);">0đ</div>
+        </div>
+      </div>
+
+      <div id="checkout-error-msg" style="display: none; color: var(--brand-red); font-weight: 800; font-size: 0.86rem; margin-bottom: 10px; text-align: center;"></div>
+
+      <button id="submit-order-btn" class="btn-primary-block" onclick="submitOrder()">
+        🚀 GỬI ORDER VỀ QUẦY PHA CHẾ
+      </button>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

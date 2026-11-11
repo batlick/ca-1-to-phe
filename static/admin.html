@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản Lý Quầy — Cả 1 tổ phê (Cà phê Tổ 1)</title>
+  <link rel="icon" type="image/png" href="/static/images/logo.png" />
+  <link rel="stylesheet" href="/static/styles.css" />
+  <style>
+    .admin-container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 20px 16px 80px;
+    }
+
+    .admin-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .tab-btn {
+      padding: 10px 18px;
+      border-radius: 14px;
+      border: 2.5px solid var(--border-dark);
+      background: #FFFFFF;
+      font-weight: 800;
+      font-size: 0.92rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-pop-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--brand-blue);
+      color: #FFFFFF;
+      transform: translate(-1px, -1px);
+      box-shadow: var(--shadow-pop);
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Kanban Columns */
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .kanban-col {
+      background: #FAF3DC;
+      border: 3px solid var(--border-dark);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: var(--shadow-pop);
+      min-height: 420px;
+    }
+
+    .kanban-col-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 2.5px solid var(--border-dark);
+    }
+
+    .col-count {
+      background: var(--brand-red);
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 0.8rem;
+      padding: 2px 10px;
+      border-radius: 999px;
+      border: 2px solid var(--border-dark);
+    }
+
+    .order-card {
+      background: #FFFFFF;
+      border: 2.5px solid var(--border-dark);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-pop-sm);
+      animation: modalPop 0.2s ease-out;
+    }
+
+    .order-card.new-highlight {
+      border-color: var(--brand-red);
+      background: #FFFDF5;
+    }
+
+    .order-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .order-badge-code {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--brand-red);
+      background: var(--brand-yellow-soft);
+      padding: 1px 10px;
+      border-radius: 8px;
+      border: 2px solid var(--border-dark);
+    }
+
+    .order-items-box {
+      background: #FAF7EE;
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin: 8px 0;
+      border: 1.5px dashed #D7CBB4;
+      font-size: 0.86rem;
+    }
+
+    .order-action-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn-action {
+      flex: 1;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 2px solid var(--border-dark);
+      font-weight: 800;
+      font-size: 0.84rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-pop-sm);
+    }
+
+    .btn-action-blue {
+      background: var(--brand-blue);
+      color: #FFFFFF;
+    }
+
+    .btn-action-green {
+      background: #15803D;
+      color: #FFFFFF;
+    }
+
+    .btn-action-yellow {
+      background: var(--brand-yellow);
+      color: var(--espresso);
+    }
+
+    /* Analytics Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: #FFFFFF;
+      border: 3px solid var(--border-dark);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: var(--shadow-pop);
+    }
+
+    .kpi-value {
+      font-family: 'Baloo 2', cursive;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--brand-red);
+      line-height: 1.1;
+      margin-top: 6px;
+    }
+
+    .analytics-two-col {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+    }
+
+    .panel-card {
+      background: #FFFFFF;
+      border: 3px solid var(--border-dark);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: var(--shadow-pop);
+    }
+
+    .mix-bar-track {
+      height: 14px;
+      background: #EFE9D8;
+      border-radius: 999px;
+      border: 1.5px solid var(--border-dark);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .mix-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand-blue), var(--brand-red));
+      border-radius: 999px;
+    }
+
+    @media (max-width: 920px) {
+      .kanban-board {
+        grid-template-columns: 1fr;
+      }
+      .analytics-two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner" style="max-width: 1180px;">
+      <div class="brand-identity">
+        <img src="/static/images/logo.png" alt="Logo Cà phê Tổ 1" class="brand-logo" />
+        <div class="brand-titles">
+          <span class="brand-title-sub">Cà phê Tổ 1</span>
+          <span class="brand-title-main">Quầy Cả 1 Tổ Phê</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span id="role-badge" class="pill-badge" style="background:#E0ECFF; color:var(--brand-blue-dark); display:none;">
+          🔐 Quyền truy cập
+        </span>
+        <button id="sound-toggle-btn" class="pill-badge" style="cursor:pointer;" onclick="testBellSound()">
+          🔔 Test Chuông
+        </button>
+        <button class="btn-outline-sm" onclick="logoutAdmin()">
+          🔑 Đổi PIN
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PIN Gate Overlay -->
+  <div id="pin-modal" class="modal-backdrop">
+    <div class="modal-panel" style="text-align: center; max-width: 400px;">
+      <img src="/static/images/logo.png" alt="Logo" style="width: 72px; height: 72px; border-radius: 16px; border: 2.5px solid var(--border-dark); margin-bottom: 10px;" />
+      <h2 style="font-size: 1.65rem; color: var(--brand-red);">Đăng Nhập Trang Quản Lý</h2>
+      <p style="font-size: 0.88rem; color: var(--espresso-muted); margin-bottom: 16px;">
+        Vui lòng nhập mã PIN để truy cập hệ thống quản lý quầy.
+      </p>
+      <input
+        id="pin-input"
+        type="password"
+        class="input-field"
+        style="text-align: center; font-size: 1.4rem; letter-spacing: 0.25em; margin-bottom: 12px;"
+        placeholder="Nhập mã PIN..."
+        onkeydown="if(event.key==='Enter') verifyAdminPin()"
+      />
+      <div id="pin-error" style="display:none; color:var(--brand-red); font-weight:800; font-size:0.85rem; margin-bottom:10px;"></div>
+      <button class="btn-primary-block" onclick="verifyAdminPin()">🔓 Xác Nhận Truy Cập</button>
+    </div>
+  </div>
+
+  <main class="admin-container">
+    <!-- Streamlined Navigation Tabs -->
+    <div class="admin-tabs">
+      <button class="tab-btn active" data-tab="tab-orders" onclick="switchTab('tab-orders', this)">
+        ⚡ Quản lý đơn (<span id="active-count-badge">0</span>)
+      </button>
+      <button class="tab-btn" data-tab="tab-analytics" onclick="switchTab('tab-analytics', this)">
+        📊 Thống Kê
+      </button>
+      <button class="tab-btn" data-tab="tab-menu" onclick="switchTab('tab-menu', this)">
+        🥤 Quản lý menu
+      </button>
+      <button class="tab-btn" data-tab="tab-qr" onclick="switchTab('tab-qr', this)">
+        🏁 Tạo & In Mã QR Đặt Món
+      </button>
+    </div>
+
+    <!-- TAB 1: Quản lý đơn -->
+    <section id="tab-orders" class="tab-pane active">
+      <div class="kanban-board">
+        <!-- Column 1: Pending -->
+        <div class="kanban-col">
+          <div class="kanban-col-header">
+            <h3 style="font-size: 1.2rem; color: var(--brand-red);">🔔 Đơn Mới Chờ Nhận</h3>
+            <span id="count-pending" class="col-count">0</span>
+          </div>
+          <div id="list-pending"></div>
+        </div>
+
+        <!-- Column 2: Preparing -->
+        <div class="kanban-col">
+          <div class="kanban-col-header">
+            <h3 style="font-size: 1.2rem; color: var(--brand-blue);">☕ Đang Pha Chế</h3>
+            <span id="count-preparing" class="col-count" style="background: var(--brand-blue);">0</span>
+          </div>
+          <div id="list-preparing"></div>
+        </div>
+
+        <!-- Column 3: Ready / Completed -->
+        <div class="kanban-col">
+          <div class="kanban-col-header">
+            <h3 style="font-size: 1.2rem; color: #15803D;">🎉 Đã Xong / Giao Khách</h3>
+            <span id="count-ready" class="col-count" style="background: #15803D;">0</span>
+          </div>
+          <div id="list-ready"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: Thống Kê -->
+    <section id="tab-analytics" class="tab-pane">
+      <!-- Master Admin Only: Reset Orders Toolbar -->
+      <div id="master-analytics-toolbar" class="panel-card" style="display: none; margin-bottom: 20px; background: #FFFDF4; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+        <div>
+          <span class="poster-blue-tag">Quyền Admin Chính</span>
+          <h3 style="font-size: 1.3rem;">Quản Lý Dữ Liệu Thống Kê</h3>
+          <p style="font-size: 0.86rem; color: var(--espresso-muted);">
+            Làm mới toàn bộ lịch sử đơn hàng và doanh thu về 0 khi kết thúc ca/ngày.
+          </p>
+        </div>
+        <button class="btn-action" style="flex: unset; padding: 10px 18px; background:#FEE2E2; color:var(--brand-red);" onclick="resetAllOrders()">
+          🗑️ Xoá sạch đơn
+        </button>
+      </div>
+
+      <!-- 4 Key Metrics -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div style="font-size: 0.82rem; font-weight: 800; color: var(--espresso-muted); text-transform: uppercase;">💰 Tổng Doanh Thu</div>
+          <div id="kpi-revenue" class="kpi-value">0đ</div>
+          <div style="font-size: 0.78rem; color: #15803D; font-weight: 700; margin-top: 4px;">▲ Thanh toán trực tiếp tại quầy</div>
+        </div>
+        <div class="kpi-card">
+          <div style="font-size: 0.82rem; font-weight: 800; color: var(--espresso-muted); text-transform: uppercase;">🥤 Tổng Số Ly 700ML Bán Ra</div>
+          <div id="kpi-cups" class="kpi-value" style="color: var(--brand-blue);">0 ly</div>
+          <div style="font-size: 0.78rem; color: var(--espresso-muted); font-weight: 700; margin-top: 4px;">Dung tích "To Đùng" 700ml</div>
+        </div>
+        <div class="kpi-card">
+          <div style="font-size: 0.82rem; font-weight: 800; color: var(--espresso-muted); text-transform: uppercase;">🧾 Tổng Số Đơn Đặt Qua QR</div>
+          <div id="kpi-orders" class="kpi-value" style="color: var(--espresso);">0 đơn</div>
+          <div id="kpi-aov" style="font-size: 0.78rem; color: var(--brand-red); font-weight: 700; margin-top: 4px;">Giá trị TB: 0đ/đơn</div>
+        </div>
+        <div class="kpi-card">
+          <div style="font-size: 0.82rem; font-weight: 800; color: var(--espresso-muted); text-transform: uppercase;">⚡ Tốc Độ Phục Vụ TB</div>
+          <div class="kpi-value" style="color: #15803D;">2.4 phút</div>
+          <div style="font-size: 0.78rem; color: var(--espresso-muted); font-weight: 700; margin-top: 4px;">Phục vụ nhanh tại bàn</div>
+        </div>
+      </div>
+
+      <div class="analytics-two-col">
+        <div class="panel-card">
+          <h3 style="font-size: 1.35rem; margin-bottom: 14px;">🏆 Tỷ Trọng Doanh Số Theo Món</h3>
+          <div id="product-mix-list" style="display: flex; flex-direction: column; gap: 16px;"></div>
+        </div>
+
+        <div class="panel-card">
+          <h3 style="font-size: 1.35rem; margin-bottom: 14px;">⏰ Lưu Lượng Ly Bán Theo Khung Giờ</h3>
+          <div id="hourly-chart-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: Quản lý menu -->
+    <section id="tab-menu" class="tab-pane">
+      <div class="panel-card">
+        <h3 style="font-size: 1.4rem; margin-bottom: 6px;">🥤 Quản Lý Menu</h3>
+        <p id="menu-tab-desc" style="font-size: 0.88rem; color: var(--espresso-muted); margin-bottom: 18px;">
+          Bật/tắt trạng thái Còn món hoặc Tạm hết trên màn hình đặt nước của khách.
+        </p>
+        <div id="admin-menu-list" style="display: flex; flex-direction: column; gap: 14px;"></div>
+      </div>
+    </section>
+
+    <!-- TAB 4: Tạo & In Mã QR Đặt Món -->
+    <section id="tab-qr" class="tab-pane">
+      <div class="analytics-two-col">
+        <div class="panel-card">
+          <span class="poster-blue-tag">Tạo mã QR tự động</span>
+          <h3 style="font-size: 1.45rem; margin-bottom: 10px;">Trình Tạo Mã QR Đặt Món Tại Bàn</h3>
+          <p style="font-size: 0.88rem; color: var(--espresso-muted); margin-bottom: 16px;">
+            Hệ thống tự động gắn đường link Public để khách dùng điện thoại quét vào thẳng trang đặt nước.
+          </p>
+
+          <div class="option-group">
+            <label class="option-label">Đường dẫn Public của ứng dụng:</label>
+            <input id="qr-base-url" type="text" class="input-field" />
+          </div>
+
+          <div class="option-group">
+            <label class="option-label">Gắn tên bàn / vị trí vào mã QR (tuỳ chọn):</label>
+            <input id="qr-table-name" type="text" class="input-field" placeholder="VD: Bàn 01, Bàn 02, Quầy Chính..." value="Bàn 01" />
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-primary-block" onclick="refreshQRPreview()">🔄 Tạo Mã QR Mới</button>
+          </div>
+        </div>
+
+        <div class="panel-card" style="text-align: center; background: #FFFDF4;">
+          <div style="border: 3px solid var(--border-dark); border-radius: 20px; padding: 20px; background: #FDF8E7; display: inline-block; max-width: 340px; width: 100%; box-shadow: var(--shadow-pop);">
+            <span class="hero-volume-tag" style="margin-bottom: 8px;">QUÉT MÃ ĐẶT MÓN NGAY</span>
+            <h3 style="font-size: 1.6rem; color: var(--brand-blue);">Cả 1 tổ phê</h3>
+            <div style="font-weight: 800; color: var(--brand-red); font-size: 0.95rem; margin-bottom: 12px;">
+              CÀ PHÊ TỔ 1 • LY TO ĐÙNG 700ML
+            </div>
+            <img id="qr-preview-img" src="/api/qr?table=B%C3%A0n%2001" alt="QR Code Đặt Món" style="width: 220px; height: 220px; border-radius: 14px; border: 2.5px solid var(--border-dark); background: #FFFFFF; padding: 6px;" />
+            <div id="qr-preview-table" style="font-weight: 800; font-size: 1rem; margin-top: 10px; color: var(--espresso);">
+              📍 Vị trí: Bàn 01
+            </div>
+            <div id="qr-preview-link" style="font-size: 0.75rem; color: var(--espresso-muted); word-break: break-all; margin-top: 4px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Preloaded Barista Reception Bell Audio -->
+  <audio id="barista-bell-audio" src="/static/bell.wav" preload="auto"></audio>
+
+  <script>
+    let allOrders = [];
+    let adminMenu = [];
+    let audioCtx = null;
+    let currentRole = sessionStorage.getItem("cafego_admin_role") || "";
+    let currentPin = sessionStorage.getItem("cafego_admin_pin") || "";
+    let knownOrderIds = new Set();
+    let isFirstOrderLoad = true;
+    let lastOrdersSignature = "";
+
+    function formatVND(amount) {
+      return Number(amount || 0).toLocaleString("vi-VN") + "đ";
+    }
+
+    function unlockAudioOnInteraction() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        const bellEl = document.getElementById("barista-bell-audio");
+        if (bellEl) {
+          bellEl.volume = 1.0;
+          bellEl.load();
+        }
+      } catch (e) {}
+    }
+
+    document.addEventListener("click", unlockAudioOnInteraction, { passive: true });
+    document.addEventListener("keydown", unlockAudioOnInteraction, { passive: true });
+
+    function playNewOrderChime() {
+      // 1. Play the pre-generated loud WAV bell file
+      try {
+        const bellEl = document.getElementById("barista-bell-audio");
+        if (bellEl) {
+          bellEl.currentTime = 0;
+          bellEl.volume = 1.0;
+          const playPromise = bellEl.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(() => {
+              playSynthBackupBell();
+            });
+            return;
+          }
+        }
+      } catch (e) {}
+
+      // 2. Fallback Web Audio synth if HTML5 Audio is blocked
+      playSynthBackupBell();
+    }
+
+    function playSynthBackupBell() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        const now = audioCtx.currentTime;
+        const notes = [1046.5, 1318.51, 1567.98];
+        notes.forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, now + idx * 0.22);
+          gain.gain.setValueAtTime(0.65, now + idx * 0.22);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.22 + 0.65);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + idx * 0.22);
+          osc.stop(now + idx * 0.22 + 0.65);
+        });
+      } catch (e) {
+        console.warn("Audio chime blocked:", e);
+      }
+    }
+
+    function showNewOrderToast(orderCode, customerName) {
+      let toast = document.getElementById("new-order-toast");
+      if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "new-order-toast";
+        toast.style.cssText =
+          "position:fixed; top:76px; right:20px; z-index:999; background:#C82A1E; color:#FFFFFF; " +
+          "border:3px solid #23140E; border-radius:16px; padding:14px 20px; font-weight:800; " +
+          "box-shadow:4px 4px 0px #23140E; transition:opacity 0.3s ease;";
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `🔔 ĐƠN MỚI <strong>${orderCode}</strong> — ${customerName}!`;
+      toast.style.opacity = "1";
+      toast.style.display = "block";
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.style.display = "none";
+      }, 4500);
+    }
+
+    function testBellSound() {
+      unlockAudioOnInteraction();
+      playNewOrderChime();
+    }
+
+    function applyRolePermissions() {
+      const roleBadge = document.getElementById("role-badge");
+      const masterToolbar = document.getElementById("master-analytics-toolbar");
+      const menuDesc = document.getElementById("menu-tab-desc");
+
+      if (currentRole === "admin") {
+        roleBadge.style.display = "inline-flex";
+        roleBadge.textContent = "👑 Admin Chính";
+        roleBadge.style.background = "#FEF3C7";
+        roleBadge.style.color = "#92400E";
+        if (masterToolbar) masterToolbar.style.display = "flex";
+        if (menuDesc) {
+          menuDesc.textContent = "Quyền Admin Chính: Bạn có thể điều chỉnh giá bán sản phẩm và bật/tắt trạng thái Còn món / Hết món.";
+        }
+      } else if (currentRole === "staff") {
+        roleBadge.style.display = "inline-flex";
+        roleBadge.textContent = "🧑‍🍳 Nhân viên Quầy";
+        roleBadge.style.background = "#E0ECFF";
+        roleBadge.style.color = "var(--brand-blue-dark)";
+        if (masterToolbar) masterToolbar.style.display = "none";
+        if (menuDesc) {
+          menuDesc.textContent = "Bật/tắt trạng thái Còn món hoặc Tạm hết trên màn hình đặt nước của khách.";
+        }
+      }
+      loadAdminMenu();
+    }
+
+    async function verifyAdminPin() {
+      unlockAudioOnInteraction();
+      const pin = document.getElementById("pin-input").value.trim();
+      const errEl = document.getElementById("pin-error");
+      try {
+        const res = await fetch("/api/admin/verify-pin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pin }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          errEl.textContent = data.error || "Sai mã PIN";
+          errEl.style.display = "block";
+          return;
+        }
+        currentRole = data.role;
+        currentPin = pin;
+        sessionStorage.setItem("cafego_admin_unlocked", "1");
+        sessionStorage.setItem("cafego_admin_role", currentRole);
+        sessionStorage.setItem("cafego_admin_pin", currentPin);
+        document.getElementById("pin-modal").classList.add("hidden");
+        errEl.style.display = "none";
+        applyRolePermissions();
+        playNewOrderChime();
+        await Promise.all([loadOrders(true), loadStats(), loadAdminMenu()]);
+      } catch (err) {
+        errEl.textContent = "Lỗi kết nối máy chủ";
+        errEl.style.display = "block";
+      }
+    }
+
+    function logoutAdmin() {
+      sessionStorage.removeItem("cafego_admin_unlocked");
+      sessionStorage.removeItem("cafego_admin_role");
+      sessionStorage.removeItem("cafego_admin_pin");
+      currentRole = "";
+      currentPin = "";
+      document.getElementById("pin-input").value = "";
+      document.getElementById("pin-modal").classList.remove("hidden");
+    }
+
+    function switchTab(tabId, btnEl) {
+      document.querySelectorAll(".tab-pane").forEach((p) => p.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+      btnEl.classList.add("active");
+      if (tabId === "tab-analytics") loadStats();
+      if (tabId === "tab-menu") loadAdminMenu();
+      if (tabId === "tab-qr") refreshQRPreview();
+    }
+
+    async function loadOrders(forceRender = false) {
+      try {
+        const res = await fetch(`/api/orders?_t=${Date.now()}`, { cache: "no-store" });
+        const data = await res.json();
+        const incoming = data.orders || [];
+
+        // Detect newly created pending orders and ring the bell immediately
+        if (isFirstOrderLoad) {
+          incoming.forEach((o) => knownOrderIds.add(o.id));
+          isFirstOrderLoad = false;
+        } else {
+          let newOrderDetected = null;
+          for (const o of incoming) {
+            if (!knownOrderIds.has(o.id)) {
+              knownOrderIds.add(o.id);
+              if (o.status === "pending") {
+                newOrderDetected = o;
+              }
+            }
+          }
+          if (newOrderDetected) {
+            playNewOrderChime();
+            showNewOrderToast(newOrderDetected.order_code, newOrderDetected.customer_name);
+            loadStats();
+          }
+        }
+
+        const sig = JSON.stringify(incoming);
+        if (forceRender || sig !== lastOrdersSignature) {
+          lastOrdersSignature = sig;
+          allOrders = incoming;
+          renderKanban();
+        }
+      } catch (e) {
+        console.error("Error loading orders:", e);
+      }
+    }
+
+    function renderKanban() {
+      const pending = allOrders.filter((o) => o.status === "pending");
+      const preparing = allOrders.filter((o) => o.status === "preparing");
+      const readyAndDone = allOrders.filter((o) => o.status === "ready" || o.status === "completed").slice(0, 12);
+
+      document.getElementById("count-pending").textContent = String(pending.length);
+      document.getElementById("count-preparing").textContent = String(preparing.length);
+      document.getElementById("count-ready").textContent = String(readyAndDone.length);
+      document.getElementById("active-count-badge").textContent = String(pending.length + preparing.length);
+
+      document.getElementById("list-pending").innerHTML =
+        pending.map((o) => renderOrderCard(o, "pending")).join("") ||
+        `<div style="text-align:center; padding:24px; color:var(--espresso-muted); font-size:0.88rem;">Chưa có đơn mới chờ nhận</div>`;
+
+      document.getElementById("list-preparing").innerHTML =
+        preparing.map((o) => renderOrderCard(o, "preparing")).join("") ||
+        `<div style="text-align:center; padding:24px; color:var(--espresso-muted); font-size:0.88rem;">Chưa có đơn đang pha</div>`;
+
+      document.getElementById("list-ready").innerHTML =
+        readyAndDone.map((o) => renderOrderCard(o, o.status)).join("") ||
+        `<div style="text-align:center; padding:24px; color:var(--espresso-muted); font-size:0.88rem;">Chưa có đơn hoàn tất</div>`;
+    }
+
+    function renderOrderCard(order, stage) {
+      const itemsHtml = (order.items || [])
+        .map(
+          (i) => `
+          <div style="margin-bottom:6px;">
+            <strong>${i.quantity}x ${i.item_name}</strong>
+            <div style="font-size:0.78rem; color:var(--brand-blue); font-weight:700;">
+              ↳ ${i.sweetness} • ${i.ice_level}
+              ${i.item_note ? `<span style="color:var(--brand-red);"> (${i.item_note})</span>` : ""}
+            </div>
+          </div>`
+        )
+        .join("");
+
+      let actionsHtml = "";
+      if (stage === "pending") {
+        actionsHtml = `
+          <button class="btn-action btn-action-blue" onclick="changeOrderStatus(${order.id}, 'preparing')">
+            ☕ Nhận & Pha Chế
+          </button>
+          <button class="btn-action" style="flex:0.4; background:#FEE2E2; color:#991B1B;" onclick="changeOrderStatus(${order.id}, 'cancelled')">
+            Huỷ (Hết món)
+          </button>
+        `;
+      } else if (stage === "preparing") {
+        actionsHtml = `
+          <button class="btn-action btn-action-green" onclick="changeOrderStatus(${order.id}, 'ready')">
+            🔔 Báo Đã Xong
+          </button>
+          <button class="btn-action" style="flex:0.35; background:#FEE2E2; color:#991B1B;" onclick="changeOrderStatus(${order.id}, 'cancelled')">
+            Huỷ
+          </button>
+        `;
+      } else if (stage === "ready") {
+        actionsHtml = `
+          <button class="btn-action btn-action-yellow" onclick="changeOrderStatus(${order.id}, 'completed')">
+            💵 Đã Giao & Thu Tiền
+          </button>
+        `;
+      } else {
+        actionsHtml = `
+          <div style="font-size:0.78rem; font-weight:800; color:#15803D; width:100%; text-align:center; padding:4px; background:#DCFCE7; border-radius:8px;">
+            ✔ Đã hoàn thành & thu ${formatVND(order.total_amount)}
+          </div>
+        `;
+      }
+
+      return `
+        <div class="order-card ${stage === "pending" ? "new-highlight" : ""}">
+          <div class="order-top">
+            <span class="order-badge-code">${order.order_code}</span>
+            <span style="font-size:0.76rem; color:var(--espresso-muted); font-weight:700;">${order.created_at.slice(11, 16)}</span>
+          </div>
+          <div style="font-weight:800; font-size:1rem;">
+            👤 ${order.customer_name}
+            ${order.table_name ? `<span style="color:var(--brand-blue);"> • 📍 ${order.table_name}</span>` : ""}
+          </div>
+          ${order.note ? `<div style="font-size:0.8rem; color:var(--brand-red); font-weight:700; margin-top:2px;">📝 Ghi chú: ${order.note}</div>` : ""}
+          <div class="order-items-box">${itemsHtml}</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.88rem; font-weight:800;">
+            <span>Tổng ${order.total_cups} ly (700ml)</span>
+            <span style="color:var(--brand-red); font-size:1.05rem;">${formatVND(order.total_amount)}</span>
+          </div>
+          <div class="order-action-row">${actionsHtml}</div>
+        </div>
+      `;
+    }
+
+    async function changeOrderStatus(orderId, newStatus) {
+      await fetch(`/api/orders/${orderId}/status`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      await loadOrders();
+      await loadStats();
+    }
+
+    async function loadStats() {
+      const res = await fetch(`/api/stats?_t=${Date.now()}`, { cache: "no-store" });
+      const data = await res.json();
+      const s = data.stats;
+      if (!s) return;
+
+      document.getElementById("kpi-revenue").textContent = formatVND(s.total_revenue);
+      document.getElementById("kpi-cups").textContent = `${s.total_cups} ly`;
+      document.getElementById("kpi-orders").textContent = `${s.total_orders} đơn`;
+      document.getElementById("kpi-aov").textContent = `Giá trị TB: ${formatVND(s.avg_order_value)}/đơn`;
+
+      const mixEl = document.getElementById("product-mix-list");
+      mixEl.innerHTML = (s.product_mix || [])
+        .map(
+          (m) => `
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; font-weight:800;">
+              <span>${m.name} <small style="color:var(--espresso-muted);">(${formatVND(m.unit_price)})</small></span>
+              <span style="color:var(--brand-red);">${m.cups_sold} ly (${m.share_percent}%) • ${formatVND(m.revenue)}</span>
+            </div>
+            <div class="mix-bar-track">
+              <div class="mix-bar-fill" style="width: ${Math.max(4, m.share_percent)}%;"></div>
+            </div>
+          </div>
+        `
+        )
+        .join("");
+
+      const maxHourly = Math.max(1, ...(s.hourly_cups || []).map((h) => h.cups));
+      document.getElementById("hourly-chart-list").innerHTML = (s.hourly_cups || [])
+        .map((h) => {
+          const pct = Math.round((h.cups / maxHourly) * 100);
+          return `
+            <div style="display:grid; grid-template-columns: 60px 1fr 55px; align-items:center; gap:10px; font-size:0.84rem; font-weight:700;">
+              <span>${h.hour}</span>
+              <div class="mix-bar-track" style="margin-top:0; height:12px;">
+                <div class="mix-bar-fill" style="width:${pct}%; background:var(--brand-blue);"></div>
+              </div>
+              <span style="text-align:right;">${h.cups} ly</span>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    async function resetAllOrders() {
+      if (currentRole !== "admin") return;
+      if (!confirm("Bạn có chắc chắn muốn xoá sạch toàn bộ đơn hàng trong hệ thống?")) return;
+      const res = await fetch("/api/demo/reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: currentPin }),
+      });
+      if (!res.ok) {
+        const d = await res.json();
+        alert(d.error || "Không thể xoá đơn");
+        return;
+      }
+      await loadOrders();
+      await loadStats();
+    }
+
+    async function loadAdminMenu() {
+      const res = await fetch(`/api/menu?_t=${Date.now()}`, { cache: "no-store" });
+      const data = await res.json();
+      adminMenu = data.items || [];
+      const listEl = document.getElementById("admin-menu-list");
+      const isMaster = currentRole === "admin";
+
+      listEl.innerHTML = adminMenu
+        .map(
+          (item) => `
+          <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px; padding:14px 16px; border:2.5px solid var(--border-dark); border-radius:16px; background:#FAF6E8;">
+            <div style="display:flex; align-items:center; gap:14px;">
+              <img src="${item.image_url}" alt="${item.name}" style="width:68px; height:68px; border-radius:12px; object-fit:cover; border:2px solid var(--border-dark); background:#fff;" />
+              <div>
+                <span class="poster-blue-tag" style="font-size:0.7rem; padding:2px 8px;">${item.tagline}</span>
+                <div style="font-weight:800; font-size:1.15rem;">${item.name} — <span style="color:var(--brand-red);">${formatVND(item.price)}</span></div>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              ${
+                isMaster
+                  ? `
+                <div style="display:flex; align-items:center; gap:6px; background:#FFFFFF; padding:6px 10px; border-radius:12px; border:2px solid var(--border-dark);">
+                  <input
+                    id="price-input-${item.id}"
+                    type="number"
+                    step="1000"
+                    min="1000"
+                    value="${item.price}"
+                    style="width:95px; border:1.5px solid #D1C7B7; border-radius:8px; padding:5px 8px; font-weight:800; font-size:0.9rem;"
+                  />
+                  <button
+                    class="btn-action btn-action-blue"
+                    style="flex:unset; padding:6px 12px; font-size:0.8rem;"
+                    onclick="updateItemPrice(${item.id})"
+                  >
+                    💾 Lưu giá
+                  </button>
+                </div>
+              `
+                  : ""
+              }
+
+              <button
+                class="btn-action"
+                style="flex:unset; min-width:155px; background:${item.is_available ? "#15803D" : "#991B1B"}; color:#FFFFFF;"
+                onclick="toggleMenuAvailability(${item.id}, ${!item.is_available})"
+              >
+                ${item.is_available ? "✔ Đang Bán (Còn món)" : "✕ Đang Báo Hết Món"}
+              </button>
+            </div>
+          </div>
+        `
+        )
+        .join("");
+    }
+
+    async function updateItemPrice(itemId) {
+      const inputEl = document.getElementById(`price-input-${itemId}`);
+      if (!inputEl) return;
+      const newPrice = Number(inputEl.value);
+      const res = await fetch(`/api/menu/${itemId}/price`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ price: newPrice, pin: currentPin }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "Lỗi cập nhật giá");
+        return;
+      }
+      await loadAdminMenu();
+      await loadStats();
+    }
+
+    async function toggleMenuAvailability(itemId, nextState) {
+      await fetch(`/api/menu/${itemId}/toggle`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_available: nextState }),
+      });
+      await loadAdminMenu();
+    }
+
+    async function initConfigAndQR() {
+      const res = await fetch("/api/config");
+      const cfg = await res.json();
+      const urlInput = document.getElementById("qr-base-url");
+      if (urlInput && cfg.public_url) {
+        urlInput.value = cfg.public_url;
+      }
+      refreshQRPreview();
+    }
+
+    function refreshQRPreview() {
+      const baseUrl = document.getElementById("qr-base-url").value.trim();
+      const table = document.getElementById("qr-table-name").value.trim();
+      const params = new URLSearchParams();
+      if (table) params.set("table", table);
+      if (baseUrl) params.set("url", baseUrl);
+
+      document.getElementById("qr-preview-img").src = `/api/qr?${params.toString()}&_t=${Date.now()}`;
+      document.getElementById("qr-preview-table").textContent = table ? `📍 Vị trí: ${table}` : "📍 Quầy Chính Tổ 1";
+      const fullLink = baseUrl ? (table ? `${baseUrl}/?table=${encodeURIComponent(table)}` : `${baseUrl}/`) : window.location.origin;
+      document.getElementById("qr-preview-link").textContent = fullLink;
+    }
+
+    function connectAdminSSE() {
+      try {
+        const es = new EventSource("/api/stream");
+        es.addEventListener("order_created", () => {
+          loadOrders(true);
+          loadStats();
+        });
+        es.addEventListener("order_updated", () => {
+          loadOrders(true);
+          loadStats();
+        });
+        es.addEventListener("menu_updated", () => {
+          loadAdminMenu();
+        });
+        es.addEventListener("orders_reset", () => {
+          knownOrderIds.clear();
+          loadOrders(true);
+          loadStats();
+        });
+      } catch (e) {
+        console.warn("Admin SSE fallback to polling:", e);
+      }
+    }
+
+    function startAdminLiveSync() {
+      // High-reliability 2-second live polling so new orders and status changes
+      // always appear and ring the bell immediately even over Cloudflare Tunnel.
+      setInterval(() => {
+        loadOrders(false);
+      }, 2000);
+
+      setInterval(() => {
+        const activeTab = document.querySelector(".tab-pane.active");
+        if (activeTab && activeTab.id === "tab-analytics") {
+          loadStats();
+        }
+      }, 4000);
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (sessionStorage.getItem("cafego_admin_unlocked") === "1" && currentRole) {
+        document.getElementById("pin-modal").classList.add("hidden");
+        applyRolePermissions();
+      }
+      await initConfigAndQR();
+      await loadOrders(true);
+      await loadStats();
+      await loadAdminMenu();
+      connectAdminSSE();
+      startAdminLiveSync();
+    });
+  </script>
+</body>
+</html>
